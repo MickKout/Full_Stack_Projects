@@ -1,0 +1,16 @@
+/*
+Theme Name: CreatorPress
+Theme URI: https://example.com/creatorpress
+Author: CreatorPress Studio
+Author URI: https://example.com
+Description: Lightweight modern WordPress theme for creators, freelancers, consultants, coaches, designers, developers, and personal brands.
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: creatorpress
+Tags: one-column, custom-logo, custom-menu, featured-images, theme-options, accessibility-ready, block-styles, responsive-layout
+*/
+
+/* Root style file used for theme metadata. The actual theme styling compiles into /assets/css/style.css. */
+
+@import url("assets/css/style.css");
