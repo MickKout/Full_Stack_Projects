@@ -5,3 +5,4 @@ PERN Full-Stack E-commerce App
 node_modules
 dist
 build
+*.docx

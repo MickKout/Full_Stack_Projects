@@ -1,0 +1,21 @@
+{
+  "name": "stayora",
+  "version": "1.0.0",
+  "description": "Stayora — Premium WordPress Hotel & Villa Booking Theme",
+  "private": true,
+  "scripts": {
+    "dev": "npx tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/stayora.css --watch",
+    "build": "npx tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/stayora.css --minify",
+    "watch": "npm run dev"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
