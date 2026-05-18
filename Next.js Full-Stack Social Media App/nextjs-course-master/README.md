@@ -32,5 +32,7 @@ UPLOADTHING_TOKEN=
 ### Run the app
 
 ```shell
+npm i
 npm run dev
 ```
+Make sure that you get a Clerk React key!!

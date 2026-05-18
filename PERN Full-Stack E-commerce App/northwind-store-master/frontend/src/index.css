@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: [
+    {
+      harbor: {
+        primary: "#5C7CFA",
+        "primary-focus": "#4F46E5",
+        secondary: "#22D3EE",
+        accent: "#fbbf24",
+        neutral: "#0f172a",
+        "base-100": "#f8fafc",
+        "base-200": "#e2e8f0",
+        "base-300": "#cbd5e1",
+        info: "#0ea5e9",
+        success: "#22c55e",
+        warning: "#f59e0b",
+        error: "#ef4444",
+        "rounded-box": "1rem",
+        "rounded-btn": "9999px",
+      },
+    },
+  ];
+}
+
+body {
+  background-image: radial-gradient(circle at top left, rgba(92, 124, 250, 0.08), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.08), transparent 22%);
+}
