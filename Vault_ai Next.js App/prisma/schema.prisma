@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  free
+  pro
+  team
+}
+
+enum SubscriptionStatus {
+  active
+  past_due
+  canceled
+  incomplete
+}
+
+enum Role {
+  user
+  assistant
+}
+
+model User {
+  id                String         @id @default(cuid())
+  clerkId           String         @unique
+  email             String         @unique
+  name              String?
+  plan              Plan           @default(free)
+  stripeCustomerId  String?
+  createdAt         DateTime       @default(now())
+  documents         Document[]
+  conversations     Conversation[]
+  messages          Message[]
+  subscriptions     Subscription[]
+}
+
+model Document {
+  id            String         @id @default(cuid())
+  userId        String
+  name          String
+  url           String
+  extractedText String         @db.Text
+  createdAt     DateTime       @default(now())
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+}
+
+model Conversation {
+  id         String    @id @default(cuid())
+  documentId String
+  userId     String
+  createdAt  DateTime  @default(now())
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages   Message[]
+}
+
+model Message {
+  id             String    @id @default(cuid())
+  conversationId String
+  role           Role
+  content        String    @db.Text
+  createdAt      DateTime  @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  userId                String
+  stripeSubscriptionId  String             @unique
+  status                SubscriptionStatus
+  priceId               String
+  currentPeriodEnd      DateTime
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
