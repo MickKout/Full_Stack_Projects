@@ -1,4 +1,4 @@
-# 🛒 PERN Stack E-Commerce Platform 🚀
+# ⚓ Harbor Market — Full Stack E-Commerce Platform
 
 ![Demo App](/frontend/public/screenshot-for-readme.png)
 
@@ -6,30 +6,19 @@
 
 ## ✨ Highlights:
 
-- 🛒 Full Stack E-Commerce App built from scratch
-- ⚛️ Frontend with React, TanStack Query, Tailwind CSS & DaisyUI
-- 🚀 Backend with Express.js & TypeScript
-- 🔐 Secure Authentication with Clerk
-- 🗄️ PostgreSQL Database hosted on Neon
-- 💳 Payments integration with Polar
-- 📦 Product, Cart & Order Management
-- 📊 Admin Dashboard to manage products
-- 💬 Real-time Customer Support Chat with Stream
-- 📹 Video Calling powered by Stream
-- ⌨️ Typing Indicators in chat
-- 😀 Message Reactions
-- 🧵 Threaded Conversations
-- 📁 File Uploads in chat
-- 🎞️ GIF Support inside messages
-- 🔔 Webhooks explained and implemented step-by-step
-- 📤 Image Uploads & Optimization with ImageKit
-- 🚨 Monitoring, Error Tracking & Performance Tracking with Sentry
-- 📋 Structured Logs for debugging and analysis
-- ⚡ Modern SaaS / E-Commerce Architecture
-- 🌐 Deploy your app with a live URL
-- 🆓 100% Free Setup to get started
-- 📂 Full Source Code Provided
-- 🎯 Resume-ready production-style project
+- 🛒 Full stack e-commerce platform with a React storefront and Express API
+- ⚛️ Frontend built with React, TanStack Query, Tailwind CSS & DaisyUI
+- 🚀 Backend built with Express.js and TypeScript
+- 🔐 Secure authentication powered by Clerk
+- 🗄️ PostgreSQL database support
+- 💳 Checkout and payments integration with Polar
+- 📦 Product, cart, and order management flows
+- 📊 Admin dashboard for product management
+- 💬 Live customer support chat with Stream
+- 📹 Optional video support for orders
+- 📤 Image optimization and uploads with ImageKit
+- 🚨 Monitoring and error reporting with Sentry
+- ⚡ Modular development setup with separate backend and frontend apps
 
 ---
 
@@ -37,10 +26,11 @@
 
 ### Backend (`/backend`)
 
-```bash
-PORT=<your_port>
-NODE_ENV=<development_or_production>
+Create a `.env` file in the `backend` folder with values for:
 
+```bash
+NODE_ENV=development
+PORT=3001
 DATABASE_URL=<your_postgresql_connection_string>
 
 CLERK_PUBLISHABLE_KEY=<your_clerk_publishable_key>
@@ -56,25 +46,58 @@ IMAGEKIT_PUBLIC_KEY=<your_imagekit_public_key>
 IMAGEKIT_PRIVATE_KEY=<your_imagekit_private_key>
 IMAGEKIT_URL_ENDPOINT=<your_imagekit_url_endpoint>
 
-FRONTEND_URL=<your_frontend_url>
+FRONTEND_URL=http://localhost:5173
 
 POLAR_ACCESS_TOKEN=<your_polar_access_token>
 POLAR_WEBHOOK_SECRET=<your_polar_webhook_secret>
-POLAR_API_BASE=<your_polar_api_base_url>
+POLAR_API_BASE=https://api.polar.sh
 
 POLAR_CHECKOUT_PRODUCT_ID=<your_product_id>
 ```
 
 ### Frontend (`/frontend`)
 
+Create a `.env` file in the `frontend` folder with values for:
+
 ```bash
 VITE_CLERK_PUBLISHABLE_KEY=<your_clerk_publishable_key>
 VITE_SENTRY_DSN=<your_sentry_dsn>
-VITE_API_URL=<your_backend_api_url>
+VITE_API_URL=http://localhost:3001
 ```
 
-### Run the App
-'''bash
-npm i
+> `VITE_API_URL` should point at your running backend instance.
+
+---
+
+## 🚀 Run the app locally
+
+Open two terminals and start backend and frontend separately.
+
+1. Backend:
+
+```bash
+cd backend
+npm install
 npm run dev
 ```
+
+The backend listens on port `3001` by default.
+
+2. Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend runs with Vite, usually at `http://localhost:5173`.
+
+---
+
+## 🔧 Notes
+
+- The backend and frontend are separate apps, so install dependencies in both folders.
+- If your backend runs on a different port, update `VITE_API_URL` in `frontend/.env`.
+- Make sure `FRONTEND_URL` in the backend `.env` matches the frontend origin.
+- Use `npm run build` in each folder when you want to prepare production output.
