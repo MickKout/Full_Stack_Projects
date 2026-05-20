@@ -1,6 +1,6 @@
 # Full-Stack Projects Overview
 
-This workspace contains a set of full-stack application projects, each organized in its own folder. The root README below summarizes the main purpose, architecture, and key technologies for each app so you can quickly understand the collection and jump into the right project.
+This workspace contains a set of my personal full-stack application projects, each organized in its own folder. The root README below summarizes the main purpose, architecture, and key technologies for each app so you can quickly understand the collection and jump into the right project.
 
 > Note: Several projects include internal README files and setup instructions. Use those files for detailed installation and running steps.
 
@@ -27,28 +27,21 @@ This workspace contains a set of full-stack application projects, each organized
 - **Why it matters**: represents a production-style event management app with full CRUD flows, database integration, and server-side app structure.
 - **Location**: `event-planner-nextjs_full-stack_app/event-planner-next.js_main/`
 
-### 4. `full_stack_eventnow app_lovable`
-- **Purpose**: Event registration and check-in application with attendee tracking and analytics.
-- **Stack**: Vite + React + Tailwind CSS frontend; Supabase backend for auth and data; QR-based check-in flows.
-- **Highlights**: event creation, custom registration forms, public registration pages, confirmation email + QR issuance, attendee search/export, check-in scanning, analytics, company profile pages.
-- **Why it matters**: practical event operations app demonstrating realtime registration, secure Supabase-based multi-tenant data, and mobile-friendly check-in.
-- **Location**: `full_stack_eventnow app_lovable/eventnow-main/`
-
-### 5. `Next.js Full-Stack Social Media App`
+### 4. `Next.js Full-Stack Social Media App`
 - **Purpose**: Social networking app built with Next.js App Router and server-side capabilities.
 - **Stack**: Next.js + TypeScript + Tailwind CSS + Prisma + PostgreSQL + Clerk auth + UploadThing.
 - **Highlights**: authentication, dynamic routes, file uploads, social feeds, server components, server actions, data caching/revalidation, modern Next.js conventions.
 - **Why it matters**: showcases a Next.js-first architecture for a social feed app, including auth, uploads, database integration, and advanced routing.
 - **Location**: `Next.js Full-Stack Social Media App/nextjs-course-master/`
 
-### 6. `PERN Full-Stack E-commerce App`
+### 5. `PERN Full-Stack E-commerce App`
 - **Purpose**: Full-stack e-commerce marketplace with product, cart, order, and admin management.
 - **Stack**: React frontend + Express/TypeScript backend + PostgreSQL + Clerk + Polar payments.
 - **Highlights**: product catalog, shopping cart, checkout, order history, admin dashboard, live chat integration, image upload support, error monitoring.
 - **Why it matters**: strong example of a PERN-style commerce stack with third-party integrations and a separate frontend/backend deployment model.
 - **Location**: `PERN Full-Stack E-commerce App/northwind-store-master/`
 
-### 7. `Vault_ai Next.js App`
+### 6. `Vault_ai Next.js App`
 - **Purpose**: AI-powered document analysis SaaS platform with subscription billing.
 - **Stack**: Next.js + TypeScript + Tailwind CSS + Prisma + PostgreSQL + Clerk auth + Stripe + Uploadthing + Anthropic + Resend + Upstash.
 - **Highlights**: marketing landing page, signup/login, document uploads, AI chat per document, Stripe subscriptions, usage limits, transactional emails, rate limiting.
