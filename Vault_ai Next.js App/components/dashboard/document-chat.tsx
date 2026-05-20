@@ -37,16 +37,30 @@ export default function DocumentChat({ documentId, extractedText }: DocumentChat
     event.preventDefault();
     if (!query.trim()) return;
     setLoading(true);
-    const payload = { documentId, question: query, context: extractedText };
+    const payload = { documentId, question: query };
+    setMessages((current) => [...current, { id: crypto.randomUUID(), role: 'user', content: query, createdAt: new Date().toISOString() }]);
     try {
-      const response = await fetch('/api/ai/ask', {
+      const response = await fetch('/api/ai/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error('Failed to send');
-      const data = await response.json();
-      setMessages((current) => [...current, { id: crypto.randomUUID(), role: 'user', content: query, createdAt: new Date().toISOString() }, { id: crypto.randomUUID(), role: 'assistant', content: data.answer, createdAt: new Date().toISOString() }]);
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No stream available');
+
+      const decoder = new TextDecoder();
+      const assistantId = crypto.randomUUID();
+      setMessages((current) => [...current, { id: assistantId, role: 'assistant', content: '', createdAt: new Date().toISOString() }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setMessages((current) => current.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m)));
+      }
+
       setQuery('');
     } catch (error) {
       toast.error('Unable to send message.');
