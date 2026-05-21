@@ -48,6 +48,13 @@ This workspace contains a set of my personal full-stack application projects, ea
 - **Why it matters**: illustrates a complex SaaS workflow combining auth, file handling, billing, AI inference, and production-ready infrastructure.
 - **Location**: `Vault_ai Next.js App/`
 
+### 7. `PERN Mini Quiz App`
+- **Purpose**: Simple quiz application with question management.
+- **Stack**: React + Express + PostgreSQL + Vite.
+- **Highlights**: Quiz question CRUD, quiz taking interface, score tracking.
+- **Why it matters**: a straightforward example of a small PERN stack app with basic CRUD operations.
+- **Location**: `PERN Mini Quiz App/`
+
 ## How to use this workspace
 
 1. Open the folder for the app you want to run.
