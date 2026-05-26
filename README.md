@@ -55,6 +55,13 @@ This workspace contains a set of my personal full-stack application projects, ea
 - **Why it matters**: a straightforward example of a small PERN stack app with basic CRUD operations.
 - **Location**: `PERN Mini Quiz App/`
 
+### 8. `Vector Trading App`
+- **Purpose**: Full-Stack application for people wishing to start trading.
+- **Stack**: Tanstack + bun + React + Typescript + Tailwind.css + Supabase + Vite.
+- **Highlights**: User management system , oAuth , Dashboard features, web security.
+- **Why it matters**: a straightforward example of a modern mid-range full stack app with advanced web development concepts.
+- **Location**: `Vector_Trading_App/`
+
 ## How to use this workspace
 
 1. Open the folder for the app you want to run.
