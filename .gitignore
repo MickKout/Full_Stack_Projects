@@ -1,6 +1,7 @@
 full_stack_eventnow app_lovable
 Book Cover App
 node_modules
+*.DS_Store
 dist
 build
 *.docx

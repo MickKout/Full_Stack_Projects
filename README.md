@@ -62,6 +62,20 @@ This workspace contains a set of my personal full-stack application projects, ea
 - **Why it matters**: a straightforward example of a modern mid-range full stack app with advanced web development concepts.
 - **Location**: `Vector_Trading_App/`
 
+### 9. `Crypto Token ICP DApp`
+- **Purpose**: A decentralized application (DApp) for managing and trading ICP tokens.
+- **Stack**: React + Motoko + ICP SDK + Dfinity Internet Computer.
+- **Highlights**: Token management, trading interface, wallet integration, smart contract interaction.
+- **Why it matters**: Demonstrates the use of blockchain technology and decentralized applications, providing users with a secure and transparent way to manage their digital assets.
+- **Location**: `Crypto_Token_ICP_DApp/`
+
+### 10. `NFT Marketplace DApp`
+- **Purpose**: A decentralized marketplace for buying, selling, and trading NFTs (Non-Fungible Tokens).
+- **Stack**: React + Motoko + Bootstrap.css + Dfinity + Web3
+- **Highlights**: NFT listing, purchasing, bidding, wallet integration, smart contract interaction.
+- **Why it matters**: Illustrates the use of blockchain technology for creating decentralized marketplaces and managing digital assets.
+- **Location**: `NFT_Marketplace_DApp/`
+
 ## How to use this workspace
 
 1. Open the folder for the app you want to run.
