@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 type ChatMessage = {
   id: string;
@@ -16,10 +16,17 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("Connecting...");
   const socketRef = useRef<WebSocket | null>(null);
+  const [guestName, setGuestName] = useState("Guest");
 
-  const [guestName] = useState(
-    () => `Guest${Math.floor(Math.random() * 9000) + 1000}`
-  );
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setGuestName(`Guest${Math.floor(Math.random() * 9000) + 1000}`);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, []);
 
   const displayName = username || guestName;
 
