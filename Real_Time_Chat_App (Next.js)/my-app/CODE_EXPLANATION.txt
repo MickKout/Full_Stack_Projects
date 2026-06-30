@@ -1,0 +1,275 @@
+REAL-TIME CHAT APP - CODE EXPLANATION
+===================================
+
+This document explains the project structure and how the app works from top to bottom.
+
+1. PROJECT OVERVIEW
+-------------------
+This app is a real-time chat application built with Next.js, TypeScript, Tailwind CSS, WebSockets, and Prisma.
+It has two main responsibilities:
+- show a chat interface in the browser
+- handle live communication between users in real time
+
+The app is organized as a full-stack Next.js project where:
+- the frontend is rendered by React components
+- the backend is handled through Next.js API routes
+- real-time updates are delivered using WebSockets
+- chat messages can be saved using Prisma and a database
+
+2. MAIN FOLDERS AND FILES
+-------------------------
+
+app/
+----
+This folder contains the main frontend pages for the app.
+
+- app/page.tsx
+  This is the main chat UI page.
+  It is a client component because it uses React state and browser features.
+  It handles:
+  - the message input box
+  - display name input
+  - room selection
+  - typing feedback
+  - sending messages
+  - showing the live chat window
+
+- app/layout.tsx
+  This file defines the overall layout of the application.
+  It wraps the page content and includes the global page structure.
+
+- app/globals.css
+  This file contains the global CSS styles for the app.
+  Tailwind is used here for styling the UI.
+
+hooks/
+------
+
+- hooks/useSocket.ts
+  This file contains the custom React hook that manages the WebSocket connection.
+  It is responsible for:
+  - opening the socket connection
+  - joining a chat room
+  - loading initial rooms and messages
+  - sending chat messages
+  - sending typing notifications
+  - listening for incoming messages and typing events
+
+  Why this hook exists:
+  Instead of placing all socket logic directly inside the page component, it is extracted into a reusable hook.
+  This keeps the UI component cleaner and makes the real-time logic easier to manage.
+
+pages/api/
+----------
+This folder contains backend API routes.
+
+- pages/api/socket.ts
+  This is the most important backend file.
+  It creates and manages the WebSocket server.
+  It handles:
+  - client connections
+  - room joining
+  - typing notifications
+  - incoming chat messages
+  - broadcasting messages to users in the same room
+  - saving messages to the persistence layer
+
+  In simple terms, when a browser connects to this route, a WebSocket connection is created.
+  The server can then send and receive events without reloading the page.
+
+- pages/api/messages.ts
+  This route returns messages for a selected room.
+  It is used when the page first loads so the app can show previous messages.
+
+- pages/api/rooms.ts
+  This route returns the available chat rooms.
+  It is used to load room data for the UI.
+
+lib/
+----
+This folder contains shared logic that the app uses across the project.
+
+- lib/chatStore.ts
+  This file acts as the chat persistence layer.
+  It provides functions to:
+  - get rooms
+  - ensure a room exists
+  - fetch messages from storage
+  - save messages
+
+  It has two modes:
+  - database-backed mode using Prisma
+  - fallback in-memory mode if the database is unavailable
+
+  This makes the app resilient and easier to develop.
+
+- lib/prisma.ts
+  This file creates and exports the Prisma client instance.
+  Prisma is the database client used to connect to a PostgreSQL database.
+
+prisma/
+-------
+This folder contains the database schema and Prisma configuration.
+
+- prisma/schema.prisma
+  This defines the database models for the app:
+  - Room
+  - Message
+
+  The Room model stores chat room names.
+  The Message model stores message text, sender name, creation time, and the room relation.
+
+- prisma.config.ts
+  This is Prisma configuration used for the project.
+
+public/
+-------
+This folder is for static assets such as images, icons, or other files that should be served directly.
+
+package.json
+------------
+This file contains:
+- project dependencies
+- scripts like npm run dev and npm run build
+- Prisma-related scripts
+
+3. HOW THE FRONTEND WORKS
+-------------------------
+The main page is app/page.tsx.
+
+When the page loads:
+1. React initializes the page component.
+2. The component sets up local state for:
+   - the message text
+   - the display name
+   - the selected room
+   - typing status
+3. It loads the user’s saved display name from localStorage if one exists.
+4. It calls the useSocket hook to connect to the WebSocket server.
+
+The user experience is:
+- type a display name
+- pick or create a room
+- write a message
+- press send
+- the message appears instantly
+
+4. HOW THE SOCKET HOOK WORKS
+----------------------------
+The hook in hooks/useSocket.ts is the bridge between the UI and the WebSocket server.
+
+It does the following:
+1. Creates a WebSocket connection to /api/socket.
+2. Loads rooms and previous messages when the room changes.
+3. Sends a join event when the user enters a room.
+4. Listens for incoming messages and typing events.
+5. Updates the UI state with new messages.
+6. Sends typing notifications while the user is composing.
+
+The hook uses React state such as:
+- messages
+- rooms
+- status
+- typingUsers
+
+This state is used by the page component to render the UI.
+
+5. HOW THE BACKEND SOCKET SERVER WORKS
+--------------------------------------
+The core backend file is pages/api/socket.ts.
+
+When a client connects:
+1. A WebSocket connection is opened.
+2. The server stores the client in a room-based group.
+3. The client sends a join payload with information like room and username.
+4. The server updates the client’s state and adds it to the correct room.
+
+When a message is sent:
+1. The server receives the message payload from the client.
+2. It prepares a message object.
+3. It saves the message through the chat persistence layer.
+4. It broadcasts the message to all clients in the same room.
+
+When typing is detected:
+1. The client sends a typing event.
+2. The server forwards that typing event to other clients in the same room.
+3. The UI displays a typing indicator.
+
+6. HOW MESSAGE PERSISTENCE WORKS
+--------------------------------
+The app uses the chat store in lib/chatStore.ts to save and retrieve messages.
+
+Storage flow:
+1. When a message is received, the server calls saveMessage.
+2. saveMessage ensures the room exists.
+3. It creates a new database record in Prisma if possible.
+4. If the database is unavailable, it falls back to an in-memory list for the current session.
+
+This means the app can still function even if the database is not configured yet.
+
+7. HOW THE DATABASE SCHEMA WORKS
+--------------------------------
+The Prisma schema defines two models:
+
+- Room
+  Stores room names and creation time.
+  Each room can contain many messages.
+
+- Message
+  Stores:
+  - text
+  - username
+  - createdAt
+  - roomId
+  - userId
+
+This creates a simple relational structure where messages belong to a room.
+
+8. HOW THE UI RENDERS THE CHAT
+-----------------------------
+The main page renders:
+- a header with app title and status
+- a chat feed showing messages
+- a room selector and room join form
+- a profile/name input
+- a message box with typing text below it
+- a send button
+
+The UI updates in real time because messages are appended to state whenever the socket hook receives new payloads.
+
+9. HOW DATA FLOWS THROUGH THE APPLICATION
+-----------------------------------------
+Here is the full flow from the browser to the server and back:
+
+Step 1: User opens the app.
+Step 2: The page loads and connects to /api/socket.
+Step 3: The user joins or selects a room.
+Step 4: The user types a message.
+Step 5: The message is sent over WebSocket.
+Step 6: The server receives it.
+Step 7: The server saves it to storage.
+Step 8: The server broadcasts it to room members.
+Step 9: All clients in that room receive it.
+Step 10: The UI updates instantly and shows the new message.
+
+10. WHY THIS ARCHITECTURE IS USEFUL
+-----------------------------------
+This structure is useful because it separates concerns:
+- app/page.tsx handles presentation
+- hooks/useSocket.ts handles real-time connection behavior
+- pages/api/socket.ts handles server-side realtime logic
+- lib/chatStore.ts handles persistence
+- prisma/schema.prisma defines the database model
+
+This makes the app easier to maintain, expand, and debug.
+
+11. SUMMARY
+-----------
+The app works by combining:
+- a React frontend
+- a WebSocket server
+- room-based communication
+- typing indicators
+- Prisma-based persistence
+
+When everything is connected, users can open the app, chat live, switch rooms, and see messages instantly.

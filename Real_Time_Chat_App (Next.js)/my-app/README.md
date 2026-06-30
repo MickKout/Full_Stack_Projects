@@ -1,5 +1,14 @@
-**This full-stack application is about a real-time chat app built with Next.js, TypeScript, Tailwind CSS that uses Next.js API routes and WebSockets for real-time messaging.**
- 
+**This full-stack application is a real-time chat app built with Next.js, TypeScript, Tailwind CSS, Prisma, and WebSockets.**
+
+How it works, step by step:
+
+1. Open the app in your browser at http://localhost:3000.
+2. The main chat page loads and shows the current room, live message feed, and a message composer.
+3. When you enter a display name and send a message, the app sends it through a WebSocket connection to the server.
+4. The server receives the message, stores it in the chat store, and broadcasts it to everyone in the same room.
+5. Other users see the new message instantly without refreshing the page.
+6. Typing indicators are sent while you are composing a message, and room switching lets you move between chat spaces.
+7. Messages can be persisted with Prisma and a database-backed store, while the app still supports a fallback mode if a database is not available yet.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
