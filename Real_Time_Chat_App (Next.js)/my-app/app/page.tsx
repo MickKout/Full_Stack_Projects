@@ -1,22 +1,30 @@
 'use client';
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-
-type ChatMessage = {
-  id: string;
-  type: "message" | "system";
-  username?: string;
-  text: string;
-  createdAt: string;
-};
+import { FormEvent, useEffect, useState } from "react";
+import { useSocket } from "../hooks/useSocket";
 
 export default function Home() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
-  const [username, setUsername] = useState("");
-  const [status, setStatus] = useState("Connecting...");
-  const socketRef = useRef<WebSocket | null>(null);
+  const [username, setUsername] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return window.localStorage.getItem("chat.displayName") || "";
+  });
+  const [roomName, setRoomName] = useState("general");
+  const [roomInput, setRoomInput] = useState("");
   const [guestName, setGuestName] = useState("Guest");
+  const [userId] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    const storedUserId = window.localStorage.getItem("chat.userId") || "";
+    const nextUserId = storedUserId || `guest-${Date.now()}`;
+    window.localStorage.setItem("chat.userId", nextUserId);
+    return nextUserId;
+  });
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -28,45 +36,37 @@ export default function Home() {
     };
   }, []);
 
-  const displayName = username || guestName;
-
   useEffect(() => {
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const ws = new WebSocket(`${protocol}://${window.location.host}/api/socket`);
-    socketRef.current = ws;
+    if (username.trim()) {
+      window.localStorage.setItem("chat.displayName", username.trim());
+    }
+  }, [username]);
 
-    ws.onopen = () => setStatus("Connected");
-    ws.onclose = () => setStatus("Disconnected");
-    ws.onerror = () => setStatus("Connection error");
+  const displayName = username || guestName;
+  const { messages, rooms, status, typingUsers, sendMessage, sendTyping } = useSocket(
+    roomName,
+    displayName,
+    userId
+  );
 
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data) as ChatMessage;
-        setMessages((current) => [...current, message]);
-      } catch {
-        // ignore invalid payloads
-      }
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-
-  const sendMessage = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!text.trim() || !socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+    const didSend = sendMessage(text);
+    if (didSend) {
+      setText("");
+      sendTyping(false);
+    }
+  };
+
+  const handleJoinRoom = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextRoom = roomInput.trim().toLowerCase();
+    if (!nextRoom) {
       return;
     }
 
-    const payload = {
-      type: "message",
-      username: displayName,
-      text: text.trim(),
-    };
-
-    socketRef.current.send(JSON.stringify(payload));
-    setText("");
+    setRoomName(nextRoom);
+    setRoomInput("");
   };
 
   return (
@@ -80,7 +80,7 @@ export default function Home() {
                 Chat with your team instantly.
               </h1>
               <p className="mt-4 max-w-2xl text-slate-300">
-                Enter a display name, connect with WebSockets, and share messages in real time.
+                Pick a room, sign in with a display name, and chat with typing indicators in real time.
               </p>
             </div>
             <div className="rounded-3xl bg-slate-800/90 p-5 ring-1 ring-white/10">
@@ -92,18 +92,44 @@ export default function Home() {
         </header>
 
         <main className="grid gap-8 lg:grid-cols-[1.5fr_0.9fr]">
-          <section className="rounded-[2rem] bg-slate-900/95 p-6 ring-1 ring-white/10 shadow-2xl shadow-slate-950/20">
-            <div className="mb-6 flex items-center justify-between gap-4">
+          <section className="rounded-4xl bg-slate-900/95 p-6 ring-1 ring-white/10 shadow-2xl shadow-slate-950/20">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Live chat</p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">Message feed</h2>
+                <h2 className="mt-2 text-2xl font-semibold text-white">{roomName} room</h2>
               </div>
               <span className="rounded-full bg-cyan-500/15 px-4 py-2 text-sm text-cyan-200">
                 {messages.length} messages
               </span>
             </div>
 
-            <div className="max-h-[540px] space-y-4 overflow-y-auto pr-2 pb-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-950">
+            <form onSubmit={handleJoinRoom} className="mb-4 flex flex-col gap-3 rounded-3xl border border-white/10 bg-slate-950/70 p-4 sm:flex-row">
+              <select
+                value={roomName}
+                onChange={(event) => setRoomName(event.target.value)}
+                className="flex-1 rounded-2xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white"
+              >
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.name}>
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                value={roomInput}
+                onChange={(event) => setRoomInput(event.target.value)}
+                placeholder="Create or join room"
+                className="flex-1 rounded-2xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none"
+              />
+              <button
+                type="submit"
+                className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
+              >
+                Go
+              </button>
+            </form>
+
+            <div className="max-h-135 space-y-4 overflow-y-auto pr-2 pb-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-950">
               {messages.map((message) => (
                 <article
                   key={message.id}
@@ -127,7 +153,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="rounded-[2rem] bg-slate-900/95 p-6 ring-1 ring-white/10 shadow-2xl shadow-slate-950/20">
+          <section className="rounded-4xl bg-slate-900/95 p-6 ring-1 ring-white/10 shadow-2xl shadow-slate-950/20">
             <div className="mb-6 space-y-4">
               <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Your profile</p>
               <div className="space-y-3">
@@ -141,15 +167,21 @@ export default function Home() {
               </div>
             </div>
 
-            <form onSubmit={sendMessage} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <label className="block text-sm font-medium text-slate-300">Message</label>
               <textarea
                 rows={4}
                 value={text}
-                onChange={(event) => setText(event.target.value)}
+                onChange={(event) => {
+                  setText(event.target.value);
+                  sendTyping(event.target.value.trim().length > 0);
+                }}
                 placeholder="Type your message here..."
                 className="w-full resize-none rounded-3xl border border-white/10 bg-slate-950/80 px-4 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20"
               />
+              <div className="min-h-6 text-sm text-cyan-200">
+                {typingUsers.length > 0 ? `${typingUsers.join(", ")} typing...` : ""}
+              </div>
               <button
                 type="submit"
                 className="inline-flex w-full items-center justify-center rounded-3xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
